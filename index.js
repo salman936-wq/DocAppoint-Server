@@ -2,7 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = process.env.MONGO_DB_URI
 
 const app = express();
@@ -34,6 +34,12 @@ async function run() {
       const doctorsData = await doctorsCollection.find().toArray();
       res.send(doctorsData)
     })
+
+    app.get("/doctors/:id", async (req, res) => {
+      const { id } = req.params;
+      const singleDoctorsData = await doctorsCollection.findOne({ _id: new ObjectId(id) });
+      res.send(singleDoctorsData);
+    });
 
   } finally {
     // await client.close();
