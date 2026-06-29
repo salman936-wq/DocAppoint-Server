@@ -41,6 +41,14 @@ async function run() {
       res.send(singleDoctorsData);
     });
 
+    app.get("/bookings/:id", async (req, res) => {
+      const { id } = req.params;
+      const bookingsByUser = await doctorBookingCollections
+        .find({ userId: id })
+        .toArray();
+      res.json(bookingsByUser);
+    });
+
 
     app.post("/bookings", async (req, res) => {
       try {
