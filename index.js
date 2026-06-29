@@ -28,7 +28,7 @@ async function run() {
     await client.connect();
     const db = client.db('DocAppoint')
     const doctorsCollection = db.collection("doctors")
-
+    const doctorBookingCollections = db.collection("Bookings");
 
     app.get("/doctors", async (req, res) => {
       const doctorsData = await doctorsCollection.find().toArray();
@@ -40,6 +40,25 @@ async function run() {
       const singleDoctorsData = await doctorsCollection.findOne({ _id: new ObjectId(id) });
       res.send(singleDoctorsData);
     });
+
+
+    app.post("/bookings", async (req, res) => {
+      try {
+        const bookAppointmentDetails = req.body;
+        const result = await doctorBookingCollections.insertOne(
+          bookAppointmentDetails
+        );
+        res.send(result);
+
+      } catch (error) {
+        res.status(500).send({
+          success: false,
+          message: error.message
+        });
+      }
+      console.log(req.body)
+    });
+
 
   } finally {
     // await client.close();
