@@ -64,28 +64,43 @@ async function run() {
           message: error.message
         });
       }
-      console.log(req.body)
     });
 
-app.patch("/bookings/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const updatedData = req.body;
+    app.patch("/bookings/:id", async (req, res) => {
+      try {
+        const { id } = req.params;
+        const updatedData = req.body;
 
-    console.log("Received ID:", id);
-    console.log("Update data:", updatedData);
+        const result = await doctorBookingCollections.updateOne(
+          { _id: new ObjectId(id) },
+          { $set: updatedData }
+        );
 
-    const result = await doctorBookingCollections.updateOne(
-      { _id: new ObjectId(id) },
-      { $set: updatedData }
-    );
+        res.json(result);
+      } catch (error) {
+        console.error("PATCH /bookings/:id error:", error);
+        res.status(500).json({ message: error.message });
+      }
+    });
 
-    res.json(result);
-  } catch (error) {
-    console.error("PATCH /bookings/:id error:", error);
-    res.status(500).json({ message: error.message });
-  }
-});
+    app.delete("/bookings/:id", async (req, res) => {
+      try {
+        const { id } = req.params;
+
+        const result = await doctorBookingCollections.deleteOne({
+          _id: new ObjectId(id),
+        });
+
+        if (result.deletedCount === 0) {
+          return res.status(404).json({ message: "Booking not found" });
+        }
+
+        res.json({ message: "Booking deleted successfully", result });
+      } catch (error) {
+        console.error("DELETE /bookings/:id error:", error);
+        res.status(500).json({ message: error.message });
+      }
+    });
 
 
   } finally {
