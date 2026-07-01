@@ -29,6 +29,8 @@ async function run() {
     const db = client.db('DocAppoint')
     const doctorsCollection = db.collection("doctors")
     const doctorBookingCollections = db.collection("Bookings");
+    const usersCollection = db.collection("user");
+
 
     app.get("/doctors", async (req, res) => {
       const doctorsData = await doctorsCollection.find().toArray();
@@ -101,6 +103,32 @@ async function run() {
         res.status(500).json({ message: error.message });
       }
     });
+
+
+    app.patch("/user/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedData = req.body;
+
+    if (!updatedData.password) {
+      delete updatedData.password;
+    }
+
+    const result = await usersCollection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: updatedData }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ message: "User updated successfully", result });
+  } catch (error) {
+    console.error("PATCH /user/:id error:", error);
+    res.status(500).json({ message: error.message });
+  }
+});
 
 
   } finally {
