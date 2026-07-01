@@ -67,15 +67,25 @@ async function run() {
       console.log(req.body)
     });
 
-    app.patch("/bookings/:id", async (req, res) => {
-      const { id } = req.params
-      const updatedData = req.body
-      const result = await destinationCollection.updateOne(
-        { _id: new ObjectId(id) },
-        { $set: updatedData }
-      )
-      res.json(result)
-    })
+app.patch("/bookings/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedData = req.body;
+
+    console.log("Received ID:", id);
+    console.log("Update data:", updatedData);
+
+    const result = await doctorBookingCollections.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: updatedData }
+    );
+
+    res.json(result);
+  } catch (error) {
+    console.error("PATCH /bookings/:id error:", error);
+    res.status(500).json({ message: error.message });
+  }
+});
 
 
   } finally {
