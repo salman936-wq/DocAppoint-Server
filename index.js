@@ -60,13 +60,13 @@ async function run() {
       res.send(doctorsData)
     })
 
-    app.get("/doctors/:id", async (req, res) => {
+    app.get("/doctors/:id", veryToken, async (req, res) => {
       const { id } = req.params;
       const singleDoctorsData = await doctorsCollection.findOne({ _id: new ObjectId(id) });
       res.send(singleDoctorsData);
     });
 
-    app.get("/bookings/:id", async (req, res) => {
+    app.get("/bookings/:id", veryToken, async (req, res) => {
       const { id } = req.params;
       const bookingsByUser = await doctorBookingCollections
         .find({ userId: id })
